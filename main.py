@@ -1,7 +1,7 @@
 # maak hier de hele enigma machine in python :D
 alfabet = "abcdefghijklmnopqrstuvwxyz"
 
-#Dit wordt dus de input later
+#Dit wordt dus de input later 
 TeVertalenString = "abc"
 
 #De TeVertalenString wordt een list:
