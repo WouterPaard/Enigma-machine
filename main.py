@@ -1,12 +1,15 @@
 alfabet = "abcdefghijklmnopqrstuvwxyz"
 VertaaldeTekst = []
 
-steckerbrett = { "a" : "z",
-                 "z" : "a",
-                 "b" : "i",
-                 "i" : "b",
-                 "g" : "f",
-                 "f" : "g"}
+
+
+class Enigma:
+  def __init__(self, rotor1, rotor2, rotor3, steckerbrett):
+    self.rotor1 = rotor1
+    self.rotor2 = rotor2
+    self.rotor3 = rotor3
+    self.steckerbrett = steckerbrett
+
 
 
 #Functie die een rotor een aantal keer laat draaien.
@@ -25,9 +28,8 @@ def LetterDoorRotoren(InputLetter):
   InputLetter = alfabet[::-1][alfabet.index(InputLetter)]
   #Opnieuw door de rotoren maar nu vanaf de andere kant benaderd.
   InputLetter = alfabet[rotoren[2][0].index(InputLetter)]
-  InputLetter = alfabet[rotoren[2][0].index(InputLetter)]
-  InputLetter = alfabet[rotoren[2][0].index(InputLetter)]
-
+  InputLetter = alfabet[rotoren[1][0].index(InputLetter)]
+  InputLetter = alfabet[rotoren[0][0].index(InputLetter)]
   #Rotor 1 draait één tikje.
   rotoren[0][0] = RotorDraai(1, rotoren[0][0])
   rotoren[0][1] += 1
@@ -41,12 +43,10 @@ def LetterDoorRotoren(InputLetter):
     if rotoren[1][1] % 26 == 0:
       rotoren[1][1] = 0
       rotoren[2][0] = RotorDraai(1, rotoren[2][0])
-      rotoren[1][1]
+      rotoren[2][1] += 1
   return InputLetter
 
-
 rotoren = []
-
 
 #Hier wordt de gebruiker begeleid om de beginwaarden van de rotoren in te voeren en om de om te zetten tekst in te voeren. Verkeerde input wordt gemeld. Hierna kan de gebruiker zonder problemen de goede input invoeren.
 print("Voer de standen van de rotoren in.")
@@ -59,6 +59,17 @@ for x in range(3):
     except:
       print("Hier kunt u alleen getallen invoeren.")
 
+steckrebrett = []
+
+print("Voer de tien koppels van het stekkerbed in.")
+for x in range(10):
+  while True:
+    print("Koppel {}:".format(x+1))
+    try:
+      steckrebrett.append([])
+
+  
+
 
 print("Voer de tekst in die u wilt encrypten/decrypten.")
 #De tekst input die het moet worden gecodeerd. 
@@ -68,11 +79,11 @@ TeVertalenString = input()
 TeVertalenLijst = [char for char in TeVertalenString.lower()]
 
 #De rotoren worden gedraaid naar hun standbeginstand
-for n in rotoren:
-  n[0] = RotorDraai(n[1], n[0])
-#rotoren[0][0] = RotorDraai(rotoren[0][1], rotoren[0][0])
-#rotoren[1][0] = RotorDraai(rotoren[1][1], rotoren[1][0])
-#rotoren[2][0] = RotorDraai(rotoren[2][1], rotoren[2][0])
+#for n in rotoren:
+#  n[0] = RotorDraai(n[1], n[0])
+rotoren[0][0] = RotorDraai(rotoren[0][1], rotoren[0][0])
+rotoren[1][0] = RotorDraai(rotoren[1][1], rotoren[1][0])
+rotoren[2][0] = RotorDraai(rotoren[2][1], rotoren[2][0])
 
 #Hier gaan de letters daadwerkelijk door de rotoren en steckerbrett.
 #Per letter wordt dit doorlopen.
