@@ -1,57 +1,95 @@
-# maak hier de hele enigma machine in python :D
 alfabet = "abcdefghijklmnopqrstuvwxyz"
+VertaaldeTekst = []
 
-#Dit wordt dus de input later 
-TeVertalenString = "abc"
+steckerbrett = { "a" : "z",
+                 "z" : "a",
+                 "b" : "i",
+                 "i" : "b",
+                 "g" : "f",
+                 "f" : "g"}
 
-#De TeVertalenString wordt een list:
-TeVertalenLijst = [char for char in TeVertalenString.lower()]
 
-#functie voor het draaien van een rotor
+#Functie die een rotor een aantal keer laat draaien.
 def RotorDraai(draaiingen, rotor):
-  rotor = (rotor.lettervolgorde[-draaiingen:] + rotor.lettervolgorde)[0: 26]
+  rotor = (rotor[-draaiingen:] + rotor)[0: 26]
   return rotor
 
+def LetterDoorRotoren(InputLetter):
+  if alfabet.find(InputLetter) == -1:
+    return InputLetter
+  #Gaat door rotor 1, 2 & 3.
+  InputLetter = rotoren[0][0][alfabet.index(InputLetter)]
+  InputLetter = rotoren[1][0][alfabet.index(InputLetter)]
+  InputLetter = rotoren[2][0][alfabet.index(InputLetter)]
+  #Alfabet omkeren.
+  InputLetter = alfabet[::-1][alfabet.index(InputLetter)]
+  #Opnieuw door de rotoren maar nu vanaf de andere kant benaderd.
+  InputLetter = alfabet[rotoren[2][0].index(InputLetter)]
+  InputLetter = alfabet[rotoren[2][0].index(InputLetter)]
+  InputLetter = alfabet[rotoren[2][0].index(InputLetter)]
 
-class Rotor:
-  def __init__(self, nummer, lettervolgorde, beginstand, draaiingensindsbegin):
-    self.nummer = nummer
-    self.beginstand = beginstand
-    self.draaiingensindsbegin = draaiingensindsbegin
-    self.lettervolgorde = lettervolgorde
+  #Rotor 1 draait één tikje.
+  rotoren[0][0] = RotorDraai(1, rotoren[0][0])
+  rotoren[0][1] += 1
+
+  #Als rotor 1 een volledige draai heeft gemaakt, draait rotor 2 één tikje.
+  if rotoren[0][1] % 26 == 0:
+    rotoren[0][1] = 0
+    rotoren[1][0] = RotorDraai(1, rotoren[1][0])
+    rotoren[1][1] += 1
+    #Als rotor 2 een volledige draai heeft gemaakt, draait rotor 3 één tikje.
+    if rotoren[1][1] % 26 == 0:
+      rotoren[1][1] = 0
+      rotoren[2][0] = RotorDraai(1, rotoren[2][0])
+      rotoren[1][1]
+  return InputLetter
 
 
-#Rotor 1 wordt aangemaakt met de class. Nummer van rotor, beginwaarde = het alfabet, beginwaarde kan worden ingevoerd. Dus hier met beginwaarde 2 , 0, 0
-rotor1 = Rotor(1, alfabet, 0, 0)
-rotor2 = Rotor(2, alfabet, 0, 0)
-rotor3 = Rotor(3, alfabet, 0, 0)
+rotoren = []
 
-print("rotor1 lettervolgorde: " + str(rotor1.lettervolgorde))
-print("rotor2 lettervolgorde: " + str(rotor2.lettervolgorde))
 
-#draai rotor1 één keer
-rotor1.lettervolgorde = RotorDraai(24, rotor1)
-rotor1.beginstand += 24
-rotor2.lettervolgorde = RotorDraai(3, rotor2)
-rotor2.beginstand += 3
-rotor3.lettervolgorde = RotorDraai(4, rotor3)
-rotor3.beginstand += 4
+#Hier wordt de gebruiker begeleid om de beginwaarden van de rotoren in te voeren en om de om te zetten tekst in te voeren. Verkeerde input wordt gemeld. Hierna kan de gebruiker zonder problemen de goede input invoeren.
+print("Voer de standen van de rotoren in.")
+for x in range(3):
+  while True:
+    print("Stand rotor {}:".format(x+1))
+    try:
+     rotoren.append([alfabet,int(input())])
+     break
+    except:
+      print("Hier kunt u alleen getallen invoeren.")
 
-VertaaldeTekst = []
+
+print("Voer de tekst in die u wilt encrypten/decrypten.")
+#De tekst input die het moet worden gecodeerd. 
+TeVertalenString = input()
+
+#De TeVertalenString wordt een list.
+TeVertalenLijst = [char for char in TeVertalenString.lower()]
+
+#De rotoren worden gedraaid naar hun standbeginstand
+for n in rotoren:
+  n[0] = RotorDraai(n[1], n[0])
+#rotoren[0][0] = RotorDraai(rotoren[0][1], rotoren[0][0])
+#rotoren[1][0] = RotorDraai(rotoren[1][1], rotoren[1][0])
+#rotoren[2][0] = RotorDraai(rotoren[2][1], rotoren[2][0])
+
+#Hier gaan de letters daadwerkelijk door de rotoren en steckerbrett.
+#Per letter wordt dit doorlopen.
 for x in TeVertalenLijst:
-  x = rotor1.lettervolgorde[alfabet.index(x)]
-  x = rotor2.lettervolgorde[alfabet.index(x)]
-  x = rotor3.lettervolgorde[alfabet.index(x)]
-  x = alfabet[::-1][alfabet.index(x)]
-  x = rotor3.lettervolgorde[alfabet.index(x)]
-  x = rotor2.lettervolgorde[alfabet.index(x)]
-  x = rotor1.lettervolgorde[alfabet.index(x)]
+  #Door steckerbrett
+  if x in steckerbrett:
+    x = steckerbrett[x]
+
+  #Door rotoren
+  x = LetterDoorRotoren(x)
+
+  #Door steckerbrett
+  if x in steckerbrett:
+    x = steckerbrett[x]
+    
   VertaaldeTekst.append(x)
-  rotor1.lettervolgorde = RotorDraai(1, rotor1)
-  rotor1.beginstand += 1
-  if rotor1.beginstand % 26 == 0:
-    rotor2.lettervolgorde = RotorDraai(1, rotor2)
-    rotor2.beginstand += 1
-  print("Rotor1 " + str(rotor1.beginstand))
-  print("Rotor2 " + str(rotor2.beginstand))
-print(VertaaldeTekst)
+
+#Printen van de gecodeerde tekst
+print("\nDit is de omgezette tekst:")
+print("".join(VertaaldeTekst))
